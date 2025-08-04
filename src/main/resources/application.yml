@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: QuoraReactiveApp
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017/quora_db
+      auto-index-creation: true
+
+server:
+  port: 2025
