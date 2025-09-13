@@ -1,5 +1,6 @@
 package com.example.QuoraReactiveApp.controllers;
 
+import com.example.QuoraReactiveApp.dto.QuestionDeleteResponseDTO;
 import com.example.QuoraReactiveApp.dto.QuestionRequestDTO;
 import com.example.QuoraReactiveApp.dto.QuestionResponseDTO;
 import com.example.QuoraReactiveApp.services.IQuestionService;
@@ -24,7 +25,10 @@ public class QuestionController {
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "5") int size
     ) {
-        return ResponseEntity.status(200).body(questionService.getAllQuestions());
+        Flux<QuestionResponseDTO> response = questionService.getAllQuestions(cursor, size)
+                .doOnError(error -> System.out.println("An Error Occurred."))
+                .doOnComplete(() -> System.out.println("Questions fetched Successfully."));
+        return ResponseEntity.status(200).body(response);
     }
 
     @PostMapping
@@ -39,8 +43,8 @@ public class QuestionController {
     }
 
     @DeleteMapping("/{id}")
-    public Mono<Void> deleteQuestionById(@PathVariable String id) {
-        throw new UnsupportedOperationException("Not Implemented");
+    public Mono<QuestionDeleteResponseDTO> deleteQuestionById(@PathVariable String id) {
+        return questionService.deleteQuestionById(id);
     }
 
     @GetMapping("/search")
